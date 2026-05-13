@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESG Carbon Footprint Analysis Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #2c3e50;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+        video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.25);
+            z-index: -1;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #389602, #389602);
+            color: white;
+            box-shadow: 0 4px 20px rgba(67, 180, 2, 0.658);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: slideDown 0.8s ease-out;
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        h1 {
+            font-size: 1.8em;
+            margin: 0;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .header-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .btn {
+            background: white;
+            color: #1e3a8a;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            animation: pulse 2s infinite;
+        }
+        .btn:hover {
+            background: #1e3a8a;
+            color: white;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.4);
+        }
+        .welcome-message {
+            color: #ffffff;
+            font-size: 1em;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(22, 166, 249, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(249, 115, 22, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
+        }
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin: 40px auto;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border-radius: 12px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), inset 0 0 10px rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2), inset 0 0 12px rgba(255, 255, 255, 0.2);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.08));
+        }
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #f97316, #ea580c);
+            opacity: 0.7;
+            transition: opacity 0.4s ease;
+        }
+        .section:hover::before {
+            opacity: 1;
+        }
+        h2 {
+            color: #f97316;
+            border-bottom: 3px solid #f97316;
+            padding-bottom: 10px;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            animation: bounceIn 1s ease;
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            60% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+        .summary {
+            white-space: pre-wrap;
+            font-size: 1em;
+            line-height: 1.6;
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+        }
+        .error {
+            background: #e74c3c;
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .success {
+            background: #2ecc71;
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .field-error {
+            background: #e74c3c;
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        form {
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        input[type="file"] {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #000000;
+            font-size: 1.1em;
+            flex: 0 0 auto;
+        }
+        button {
+            background: #1e3a8a;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+            animation: pulse 2s infinite;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        button:hover {
+            background: #3b82f6;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+        }
+        button.spinning {
+            color: transparent;
+        }
+        button.spinning::before {
+            content: '';
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            position: absolute;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;
+            display: block;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px;
+            text-align: left;
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        .data-table th {
+            background: #f97316;
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+        .data-table tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .data-table tr:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        p, a {
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            font-size: 1.1em;
+        }
+        a {
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        a:hover {
+            color: #f97316;
+        }
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px 20px;
+                text-align: center;
+            }
+            .header-buttons {
+                margin-top: 10px;
+            }
+            h1 { font-size: 1.5em; }
+            .container { padding: 20px; margin: 20px auto; }
+            button { 
+                padding: 10px; 
+                font-size: 1em; 
+                width: auto; 
+                flex: 0 0 auto;
+            }
+            .btn { 
+                padding: 8px 16px; 
+                font-size: 0.8em; 
+            }
+            form { 
+                flex-direction: row; 
+                flex-wrap: wrap; 
+                justify-content: center; 
+                align-items: center; 
+            }
+            input[type="file"] { 
+                width: auto; 
+                flex: 0 0 auto; 
+            }
+            .data-table { font-size: 0.8em; }
+            video { object-fit: cover; }
+            .section {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <video autoplay loop muted playsinline>
+        <source src="{{ url_for('static', filename='background-video.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <header>
+        <div class="logo">
+            <h1>ESG Carbon Footprint Analysis Dashboard</h1>
+        </div>
+        <div class="header-buttons">
+            <span class="welcome-message">Welcome, {{ current_user.username }}!</span>
+            <a href="{{ url_for('model_comparison') }}" class="btn">Model Comparison</a>
+            <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+        </div>
+    </header>
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            {% if form.errors %}
+                <div class="field-error">
+                    {% for field, errors in form.errors.items() %}
+                        {% for error in errors %}
+                            {{ error }}<br>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {{ form.file() }}
+            <button type="submit" id="submit-btn">Generate Report</button>
+        </form>
+        {% if predicted_data %}
+        <div class="section">
+            <h2>Predicted Data</h2>
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            {% for key in predicted_data[0].keys() %}
+                                <th>{{ key }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in predicted_data %}
+                            <tr>
+                                {% for key in row.keys() %}
+                                    <td>{{ row[key] | round(4) if key == 'CO₂e_Total' else row[key] }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="section">
+            <h2>SHAP Feature Importance Plot</h2>
+            {% if image_base64 %}
+                <img src="data:image/png;base64,{{ image_base64 }}" alt="SHAP Summary Plot">
+            {% endif %}
+        </div>
+        <div class="section">
+            <h2>ESG Summary and Recommendations</h2>
+            <div class="summary">{{ esg_summary | replace('\n', '<br>') | safe }}</div>
+        </div>
+        {% else %}
+        <p>Please upload a CSV or Excel file without the target variable (or with an empty CO₂e_Total column) to generate the report.</p>
+        {% endif %}
+    </div>
+    <script>
+        // Fade-in animation for container
+        const container = document.querySelector('.container');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        observer.observe(container);
+
+        // Button pulse animation enhancement
+        document.querySelectorAll('.btn, button').forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                btn.style.animation = 'pulse 1s infinite';
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.animation = 'none';
+            });
+        });
+
+        // Button spinner on form submit
+        const form = document.querySelector('form');
+        const submitBtn = document.getElementById('submit-btn');
+        form.addEventListener('submit', function() {
+            submitBtn.classList.add('spinning');
+            setTimeout(() => { 
+                submitBtn.classList.remove('spinning'); 
+            }, 15000);
+        });
+
+        // Auto-dismiss flash messages after 5 seconds
+        const messages = document.querySelectorAll('.error, .success');
+        messages.forEach(msg => {
+            setTimeout(() => {
+                msg.style.transition = 'opacity 0.5s ease';
+                msg.style.opacity = '0';
+                setTimeout(() => msg.remove(), 500);
+            }, 5000);
+        });
+
+        // Card animation on scroll
+        const sections = document.querySelectorAll('.section');
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.2 });
+        sections.forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            sectionObserver.observe(section);
+        });
+    </script>
+</body>
+</html>

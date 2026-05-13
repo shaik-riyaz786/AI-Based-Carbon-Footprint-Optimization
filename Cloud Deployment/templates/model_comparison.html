@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Comparison - ESG Carbon Footprint Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #2c3e50;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+        video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.25);
+            z-index: -1;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #389602, #389602);
+            color: white;
+            box-shadow: 0 4px 20px rgba(67, 180, 2, 0.658);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: slideDown 0.8s ease-out;
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        h1 {
+            font-size: 1.8em;
+            margin: 0;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .header-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .btn {
+            background: white;
+            color: #1e3a8a;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            animation: pulse 2s infinite;
+        }
+        .btn:hover {
+            background: #1e3a8a;
+            color: white;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.4);
+        }
+        .welcome-message {
+            color: #ffffff;
+            font-size: 1em;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(22, 166, 249, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(249, 115, 22, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
+        }
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin: 40px auto;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border-radius: 12px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), inset 0 0 10px rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2), inset 0 0 12px rgba(255, 255, 255, 0.2);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.08));
+        }
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #f97316, #ea580c);
+            opacity: 0.7;
+            transition: opacity 0.4s ease;
+        }
+        .section:hover::before {
+            opacity: 1;
+        }
+        h2 {
+            color: #f97316;
+            border-bottom: 3px solid #f97316;
+            padding-bottom: 10px;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            animation: bounceIn 1s ease;
+        }
+        h3 {
+            color: #ffffff;
+            font-size: 1.4em;
+            margin-bottom: 10px;
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            60% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+        p, ul {
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            line-height: 1.6;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        .plot-container {
+            margin: 20px 0;
+            width: 100%;
+            height: 400px;
+        }
+        canvas#barPlot, canvas#radarPlot {
+            max-width: 100%;
+            height: auto;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+        }
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px 20px;
+                text-align: center;
+            }
+            .header-buttons {
+                margin-top: 10px;
+            }
+            h1 { font-size: 1.5em; }
+            .container { padding: 20px; margin: 20px auto; }
+            .btn { 
+                padding: 8px 16px; 
+                font-size: 0.8em; 
+            }
+            .section {
+                padding: 15px;
+            }
+            .plot-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <video autoplay loop muted playsinline>
+        <source src="{{ url_for('static', filename='background-video.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <header>
+        <div class="logo">
+            <h1>Model Comparison</h1>
+        </div>
+        <div class="header-buttons">
+            <span class="welcome-message">Welcome, {{ current_user.username }}!</span>
+            <a href="{{ url_for('dashboard') }}" class="btn">Predict</a>
+            <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+        </div>
+    </header>
+    <div class="container">
+        <div class="section">
+            <h2>Model Details</h2>
+            <div class="model-info">
+                <h3>Random Forest Regressor</h3>
+                <p><strong>Configuration</strong>: Default parameters, random_state=42, saved as random_forest_model.pkl</p>
+                <p><strong>Performance (Test Set)</strong>:</p>
+                <ul>
+                    <li>RMSE: 36.2596</li>
+                    <li>MAPE: 0.0155</li>
+                    <li>R²: 0.9508</li>
+                </ul>
+                <img src="static\Random Forest.png" alt="Random Forest Plot">
+            </div>
+            <div class="model-info">
+                <h3>XGBoost Regressor</h3>
+                <p><strong>Configuration</strong>: Objective reg:squarederror, random_state=42</p>
+                <p><strong>Performance (Test Set)</strong>:</p>
+                <ul>
+                    <li>RMSE: 28.3152</li>
+                    <li>MAPE: 0.0123</li>
+                    <li>R²: 0.9700</li>
+                </ul>
+                <img src="static\XGBoost.png" alt="XGBoost Plot">
+            </div>
+            <div class="model-info">
+                <h3>LSTM Model</h3>
+                <p><strong>Configuration</strong>: 64 units, ReLU, Dropout 20%, Dense 32, Adam optimizer, MSE loss, 50 epochs, batch size 32, saved as lstm_model.h5</p>
+                <p><strong>Performance (Test Set)</strong>:</p>
+                <ul>
+                    <li>RMSE: 25.9849</li>
+                    <li>MAPE: 0.0107</li>
+                    <li>R²: 0.9743</li>
+                </ul>
+                <img src="static\LSTM.png" alt="LSTM Plot">
+            </div>
+            <div class="model-info">
+                <h3>GRU Model</h3>
+                <p><strong>Configuration</strong>: 64 units, ReLU, Dropout 20%, Dense 32, Adam optimizer, MSE loss, 50 epochs, batch size 32, saved as gru_model.h5</p>
+                <p><strong>Performance (Test Set)</strong>:</p>
+                <ul>
+                    <li>RMSE: 25.4322</li>
+                    <li>MAPE: 0.0106</li>
+                    <li>R²: 0.9754</li>
+                </ul>
+                <img src="static\GRU.png" alt="GRU Plot">
+            </div>
+        </div>
+        <div class="section">
+            <h2>Interactive Performance Comparison Plots</h2>
+            <div class="plot-container">
+                <canvas id="barPlot"></canvas>
+            </div>
+            <div class="plot-container">
+                <canvas id="radarPlot"></canvas>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Data for plots
+            const models = ['Random Forest', 'XGBoost', 'LSTM', 'GRU'];
+            const rmse = [36.2596, 28.3152, 25.9849, 25.4322];
+            const mape = [0.0155, 0.0123, 0.0107, 0.0106];
+            const r2 = [0.9508, 0.9700, 0.9743, 0.9754];
+
+            // Normalize RMSE for radar chart (scale to 0-1 range)
+            const maxRMSE = Math.max(...rmse);
+            const normalizedRMSE = rmse.map(value => 1 - (value / maxRMSE)); // Invert because lower RMSE is better
+
+            // Bar Chart
+            const ctxBar = document.getElementById('barPlot').getContext('2d');
+            new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: models,
+                    datasets: [
+                        {
+                            label: 'RMSE',
+                            data: rmse,
+                            backgroundColor: 'rgba(249, 115, 22, 0.7)', // Orange
+                            borderColor: '#f97316',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'MAPE',
+                            data: mape.map(v => v * 100), // Scale MAPE to percentage
+                            backgroundColor: 'rgba(59, 130, 246, 0.7)', // Blue
+                            borderColor: '#3b82f6',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'R²',
+                            data: r2,
+                            backgroundColor: 'rgba(16, 185, 129, 0.7)', // Green
+                            borderColor: '#10b981',
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', labels: { color: '#ffffff', font: { size: 14 } } },
+                        title: { display: true, text: 'Model Performance Comparison (Bar)', font: { size: 18 }, color: '#ffffff' }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Value', color: '#ffffff', font: { size: 14 } },
+                            ticks: { color: '#ffffff', precision: 2 }
+                        },
+                        x: {
+                            title: { display: true, text: 'Model', color: '#ffffff', font: { size: 14 } },
+                            ticks: { color: '#ffffff' }
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuad'
+                    }
+                }
+            });
+
+            // Radar Chart
+            const ctxRadar = document.getElementById('radarPlot').getContext('2d');
+            new Chart(ctxRadar, {
+                type: 'radar',
+                data: {
+                    labels: ['RMSE (Normalized)', 'MAPE', 'R²'],
+                    datasets: [
+                        {
+                            label: 'Random Forest',
+                            data: [normalizedRMSE[0], mape[0], r2[0]],
+                            backgroundColor: 'rgba(249, 115, 22, 0.2)',
+                            borderColor: '#f97316',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#f97316'
+                        },
+                        {
+                            label: 'XGBoost',
+                            data: [normalizedRMSE[1], mape[1], r2[1]],
+                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                            borderColor: '#3b82f6',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#3b82f6'
+                        },
+                        {
+                            label: 'LSTM',
+                            data: [normalizedRMSE[2], mape[2], r2[2]],
+                            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                            borderColor: '#10b981',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#10b981'
+                        },
+                        {
+                            label: 'GRU',
+                            data: [normalizedRMSE[3], mape[3], r2[3]],
+                            backgroundColor: 'rgba(236, 72, 153, 0.2)',
+                            borderColor: '#ec4899',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#ec4899'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', labels: { color: '#ffffff', font: { size: 14 } } },
+                        title: { display: true, text: 'Model Performance Comparison (Radar)', font: { size: 18 }, color: '#ffffff' }
+                    },
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 1.1,
+                            ticks: { stepSize: 0.2, color: '#ffffff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.2)' },
+                            pointLabels: { color: '#ffffff', font: { size: 14 } }
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuad'
+                    }
+                }
+            });
+
+            // Fade-in animation for container
+            const container = document.querySelector('.container');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            observer.observe(container);
+
+            // Button pulse animation enhancement
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('mouseenter', () => {
+                    btn.style.animation = 'pulse 1s infinite';
+                });
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.animation = 'none';
+                });
+            });
+
+            // Card animation on scroll
+            const sections = document.querySelectorAll('.section');
+            const sectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.2 });
+            sections.forEach(section => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                sectionObserver.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESG Carbon Footprint Analysis - Register</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #2c3e50;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+        video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.25);
+            z-index: -1;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #389602);
+            color: white;
+            box-shadow: 0 4px 20px rgba(67, 180, 2, 0.658);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: slideDown 0.8s ease-out;
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        h1 {
+            font-size: 1.8em;
+            margin: 0;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .header-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        .btn {
+            background: white;
+            color: #0056f5;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            animation: pulse 2s infinite;
+        }
+        .btn:hover {
+            background: #3498db;
+            color: white;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 106, 245, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(245, 124, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(245, 124, 0, 0); }
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin: 40px auto;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        h2 {
+            color: #f57c00;
+            border-bottom: 3px solid #ff8c00;
+            padding-bottom: 10px;
+            font-size: 2em;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: bounceIn 1s ease;
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            60% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        label {
+            color: #ffffff;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        input {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #000000;
+            font-size: 1.1em;
+            width: 100%; /* Ensure input takes full width */
+            box-sizing: border-box; /* Prevent padding from affecting width */
+        }
+        .input-container {
+            position: relative;
+            display: flex;
+            align-items: center; /* Center vertically */
+        }
+        .toggle-password {
+            position: absolute;
+            right: 5px; /* Reduced space from 10px */
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #3498db;
+            font-size: 1em; /* Reduced size for tighter fit */
+            padding: 0 5px; /* Minimal padding */
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+            animation: pulse 2s infinite;
+        }
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.5);
+        }
+        .error {
+            background: #e74c3c;
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .success {
+            background: #2ecc71;
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .field-error {
+            background: #e74c3c;
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        p, a {
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            font-size: 1.1em;
+        }
+        a {
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        a:hover {
+            color: #f57c00;
+        }
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px 20px;
+                text-align: center;
+            }
+            .header-buttons {
+                margin-top: 10px;
+            }
+            h1 { font-size: 1.5em; }
+            .container { padding: 20px; margin: 20px auto; }
+            button { padding: 10px; font-size: 1em; }
+            .btn { padding: 8px 16px; font-size: 0.8em; }
+            video { object-fit: cover; }
+        }
+    </style>
+</head>
+<body>
+    <video autoplay loop muted playsinline>
+        <source src="{{ url_for('static', filename='background-video.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <header>
+        <div class="logo">
+            <h1>ESG Carbon Footprint Analysis Platform</h1>
+        </div>
+        <div class="header-buttons">
+            <a href="{{ url_for('home') }}" class="btn">Home</a>
+            <a href="{{ url_for('login') }}" class="btn">Login</a>
+        </div>
+    </header>
+    <div class="container">
+        <h2>Register</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            {% if form.errors %}
+                <div class="field-error">
+                    {% for field, errors in form.errors.items() %}
+                        {% for error in errors %}
+                            {{ error }}<br>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <label for="username">Username</label>
+            {{ form.username }}
+            <label for="email">Email</label>
+            {{ form.email }}
+            <label for="password">Password</label>
+            <div class="input-container">
+                {{ form.password }}
+                <span class="toggle-password" onclick="togglePassword('password')">👁️</span>
+            </div>
+            <label for="confirm_password">Confirm Password</label>
+            <div class="input-container">
+                {{ form.confirm_password }}
+                <span class="toggle-password" onclick="togglePassword('confirm_password')">👁️</span>
+            </div>
+            <label for="mobile">Mobile Number</label>
+            {{ form.mobile }}
+            <button type="submit">Register</button>
+        </form>
+        <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+    </div>
+    <script>
+        // Fade-in animation for container
+        const container = document.querySelector('.container');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        observer.observe(container);
+
+        // Button pulse animation enhancement
+        document.querySelectorAll('.btn, button').forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                btn.style.animation = 'pulse 1s infinite';
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.animation = 'none';
+            });
+        });
+
+        // Password visibility toggle
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            const toggle = field.nextElementSibling;
+            if (field.type === 'password') {
+                field.type = 'text';
+                toggle.textContent = '🙈';
+            } else {
+                field.type = 'password';
+                toggle.textContent = '👁️';
+            }
+        }
+    </script>
+</body>
+</html>

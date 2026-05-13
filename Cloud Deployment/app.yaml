@@ -1,0 +1,17 @@
+runtime: python310  # Adjust based on the Python version you're using
+
+env_variables:
+  MYSQL_USER: 'root'
+  MYSQL_PASSWORD: 'Mysql@123'
+  MYSQL_HOST: '/cloudsql/crested-analogy-439216-i1:asia-south1:mysql123'
+  MYSQL_DB: 'esg_db'
+
+entrypoint: gunicorn -b :$PORT app:app  # Gunicorn to run your app
+
+instance_class: F2  # Optional, based on your app's resource requirements
+
+handlers:
+  - url: /static
+    static_dir: static/
+  - url: /.*
+    script: auto
